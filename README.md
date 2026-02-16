@@ -90,3 +90,8 @@ provider := &OpenAIProvider{
     Model:  "gpt-4", // или "gpt-3.5-turbo"
 }
 ```
+
+## Day 1
+https://github.com/user-attachments/assets/f5a68400-3164-44fa-8d69-d8044fa7ef46
+
+
