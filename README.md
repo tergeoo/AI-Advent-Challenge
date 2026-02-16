@@ -90,8 +90,3 @@ provider := &OpenAIProvider{
     Model:  "gpt-4", // или "gpt-3.5-turbo"
 }
 ```
-
-## Требования
-
-- Go 1.21 или выше
-- API ключ OpenAI
