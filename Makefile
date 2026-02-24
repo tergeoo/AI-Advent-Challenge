@@ -1,4 +1,4 @@
-.PHONY: help day1 day2 day3 day4 build clean test tidy install
+.PHONY: help day1 day2 day3 day4 day5 day6 build clean test tidy install
 
 help: ## Показать эту справку
 	@echo "Доступные команды:"
@@ -20,6 +20,14 @@ day4: ## Запустить Day 4
 	@echo "🚀 Запуск Day 4..."
 	set -a && source .env && set +a && go run cmd/advent/day4/main.go
 
+day5: ## Запустить Day 5
+	@echo "🚀 Запуск Day 5..."
+	set -a && source .env && set +a && go run cmd/advent/day5/main.go
+
+day6: ## Запустить Day 6 (интерактивный агент)
+	@echo "🚀 Запуск Day 6..."
+	set -a && source .env && set +a && go run cmd/advent/day6/main.go
+
 build: ## Собрать все бинарники
 	@echo "🔨 Сборка всех бинарников..."
 	@mkdir -p bin
@@ -27,6 +35,8 @@ build: ## Собрать все бинарники
 	@go build -o bin/day2 cmd/advent/day2/main.go
 	@go build -o bin/day3 cmd/advent/day3/main.go
 	@go build -o bin/day4 cmd/advent/day4/main.go
+	@go build -o bin/day5 cmd/advent/day5/main.go
+	@go build -o bin/day6 cmd/advent/day6/main.go
 	@echo "✅ Бинарники собраны в директории bin/"
 
 clean: ## Удалить собранные бинарники
