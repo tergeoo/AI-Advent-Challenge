@@ -2,7 +2,9 @@ package agent
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"os"
 	"time"
 
 	openai "github.com/sashabaranov/go-openai"
@@ -201,4 +203,81 @@ func (a *Agent) GetLastMessage() *Message {
 		}
 	}
 	return nil
+}
+
+// SaveHistory сохраняет историю диалога в JSON файл
+func (a *Agent) SaveHistory(filename string) error {
+	// Создаем структуру для сохранения
+	data := struct {
+		SystemPrompt string    `json:"system_prompt,omitempty"`
+		History      []Message `json:"history"`
+		SavedAt      time.Time `json:"saved_at"`
+	}{
+		History: a.history,
+		SavedAt: time.Now(),
+	}
+
+	// Добавляем системный промпт, если есть
+	if a.systemMsg != nil {
+		data.SystemPrompt = a.systemMsg.Content
+	}
+
+	// Сериализуем в JSON с отступами для читаемости
+	jsonData, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		return fmt.Errorf("ошибка сериализации: %w", err)
+	}
+
+	// Записываем в файл
+	err = os.WriteFile(filename, jsonData, 0644)
+	if err != nil {
+		return fmt.Errorf("ошибка записи в файл: %w", err)
+	}
+
+	return nil
+}
+
+// LoadHistory загружает историю диалога из JSON файла
+func (a *Agent) LoadHistory(filename string) error {
+	// Читаем файл
+	jsonData, err := os.ReadFile(filename)
+	if err != nil {
+		if os.IsNotExist(err) {
+			// Файл не существует - это нормально для первого запуска
+			return nil
+		}
+		return fmt.Errorf("ошибка чтения файла: %w", err)
+	}
+
+	// Десериализуем JSON
+	var data struct {
+		SystemPrompt string    `json:"system_prompt,omitempty"`
+		History      []Message `json:"history"`
+		SavedAt      time.Time `json:"saved_at"`
+	}
+
+	err = json.Unmarshal(jsonData, &data)
+	if err != nil {
+		return fmt.Errorf("ошибка десериализации: %w", err)
+	}
+
+	// Загружаем историю
+	a.history = data.History
+
+	// Загружаем системный промпт, если он был сохранен
+	// (но не перезаписываем, если новый уже установлен)
+	if data.SystemPrompt != "" && a.systemMsg == nil {
+		a.systemMsg = &Message{
+			Role:      "system",
+			Content:   data.SystemPrompt,
+			Timestamp: time.Now(),
+		}
+	}
+
+	return nil
+}
+
+// AutoSave автоматически сохраняет историю после каждого сообщения
+func (a *Agent) AutoSave(filename string) error {
+	return a.SaveHistory(filename)
 }

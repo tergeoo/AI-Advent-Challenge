@@ -75,3 +75,8 @@ func PrintError(text string) {
 func PrintInfo(text string) {
 	fmt.Printf("%sℹ %s%s\n", ColorBlue, text, ColorReset)
 }
+
+// Repeat повторяет строку n раз
+func Repeat(s string, n int) string {
+	return strings.Repeat(s, n)
+}
