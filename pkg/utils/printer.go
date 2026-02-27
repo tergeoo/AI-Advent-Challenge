@@ -80,3 +80,49 @@ func PrintInfo(text string) {
 func Repeat(s string, n int) string {
 	return strings.Repeat(s, n)
 }
+
+// WrapText переносит текст по словам с заданной шириной
+func WrapText(text string, width int) string {
+	if len(text) <= width {
+		return text
+	}
+
+	words := strings.Fields(text)
+	if len(words) == 0 {
+		return text
+	}
+
+	var lines []string
+	var currentLine string
+
+	for _, word := range words {
+		// Если добавление слова превысит ширину
+		if len(currentLine)+len(word)+1 > width {
+			if currentLine != "" {
+				lines = append(lines, currentLine)
+				currentLine = word
+			} else {
+				// Слово длиннее ширины - добавляем как есть
+				lines = append(lines, word)
+			}
+		} else {
+			if currentLine == "" {
+				currentLine = word
+			} else {
+				currentLine += " " + word
+			}
+		}
+	}
+
+	// Добавляем последнюю строку
+	if currentLine != "" {
+		lines = append(lines, currentLine)
+	}
+
+	return strings.Join(lines, "\n")
+}
+
+// PrintSeparator выводит разделитель
+func PrintSeparator() {
+	fmt.Println(strings.Repeat("-", 80))
+}
